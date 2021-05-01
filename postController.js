@@ -1,30 +1,20 @@
 import Post from './post.js';
+import PostService from './postService.js';
 class postController {
     async create(req, res) {
+
         try {
-            const {
-                author,
-                title,
-                content,
-                picture
-            } = req.body;
-            const post = await Post.create({
-                author,
-                title,
-                content,
-                picture
-            });
-            res.json({
-                post
-            });
+            const post = await PostService.create(req.body, req.files.picture)
+            res.json(post)
         } catch (error) {
-            res.status(500).json(error);
+            res.status(500).json(error)
         }
+
     }
 
     async getAll(req, res) {
         try {
-            const posts = await Post.find();
+            const posts = await PostService.getAll();
             return res.json(posts)
         } catch (error) {
             res.status(500).json(error)
@@ -32,15 +22,8 @@ class postController {
     }
     async getOne(req, res) {
         try {
-            const {
-                id
-            } = req.params
-            if (!id) {
-                res.status(400).json({
-                    message: ':c'
-                })
-            }
-            const posts = await Post.findById(id);
+
+            const posts = await PostService.getOne(req.params.id);
             return res.json(posts)
         } catch (error) {
             res.status(500).json(error)
@@ -48,15 +31,8 @@ class postController {
     }
     async update(req, res) {
         try {
-            const post = req.body;
-            if (!post._id) {
-                res.status(400).json({
-                    message: ':ccc'
-                })
-            }
-            const updatedPost = await Post.findByIdAndUpdate(post._id, post, {
-                new: true
-            });
+            
+            const updatedPost = await PostService.update(req.body);
             return res.json(updatedPost);
 
         } catch (error) {
@@ -65,15 +41,8 @@ class postController {
     }
     async delete(req, res) {
         try {
-            const {
-                id
-            } = req.params;
-            if (!id) {
-                res.status(400).json({
-                    message: ':ccc'
-                })
-            }
-            const post = await Post.findByIdAndDelete(id);
+            
+            const post = await PostService.delete(req.params.id)
             return res.json(post)
         } catch (error) {
             res.status(500).json(error)
